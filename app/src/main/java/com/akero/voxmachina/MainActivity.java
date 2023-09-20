@@ -53,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
             // If the app already has the permission, proceed with whatever you want to do next.
             onPermissionAlreadyGranted();
             //TODO for testing remove this and implement properly
-            sendNotification();  // Send the notification immediately
-            scheduleReminder();
+            //sendNotification();  // Send the notification immediately
+            //scheduleReminder();
         }
     }
 
@@ -118,9 +118,11 @@ public class MainActivity extends AppCompatActivity {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            return;
+
         }
+        Log.d("tag3", "before");
         notificationManager.notify(1, builder.build());
+        Log.d("tag3", "after");
     }
 
 }
