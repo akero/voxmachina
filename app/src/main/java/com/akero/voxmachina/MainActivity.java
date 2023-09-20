@@ -21,6 +21,8 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 1234;
+    private static final int PERMISSION_REQUEST_CODE_POST_NOTIFICATIONS = 5678;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +55,9 @@ public class MainActivity extends AppCompatActivity {
             // If the app already has the permission, proceed with whatever you want to do next.
             onPermissionAlreadyGranted();
             //TODO for testing remove this and implement properly
-            //sendNotification();  // Send the notification immediately
+            Log.d("tag4","11");
+            sendNotification();  // Send the notification immediately
+            Log.d("tag4","12");
             //scheduleReminder();
         }
     }
@@ -63,8 +67,11 @@ public class MainActivity extends AppCompatActivity {
 
         // Implement the next steps you want to perform after verifying the permission is granted.
         // For now, I'm placing your notification and reminder methods here:
+        Log.d("tag4","1");
         sendNotification();  // Send the notification immediately for testing purposes
+        Log.d("tag4","2");
         scheduleReminder();
+        Log.d("tag4","3");
     }
 
     @Override
@@ -98,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle("Reminder")
                 .setContentText("This is your reminder!")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
 
         Log.d("tag2", "1");
 
@@ -111,18 +118,29 @@ public class MainActivity extends AppCompatActivity {
         Log.d("tag2", "4");
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-
+            // If permission is not granted, request for it
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, PERMISSION_REQUEST_CODE_POST_NOTIFICATIONS);
+            Log.d("tag5", "Requesting POST_NOTIFICATIONS permission");
+        } else {
+            // Permission has already been granted
+            notificationManager.notify(1, builder.build());
+            //sendNotification();
+            Log.d("tag5", "POST_NOTIFICATIONS permission already granted");
         }
-        Log.d("tag3", "before");
-        notificationManager.notify(1, builder.build());
-        Log.d("tag3", "after");
     }
+   /* @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // POST_NOTIFICATIONS permission granted
+                sendNotification();
+                Log.d("tag5", "POST_NOTIFICATIONS permission granted");
+            } else {
+                // POST_NOTIFICATIONS permission denied
+                Log.d("tag5", "POST_NOTIFICATIONS permission denied");
+            }
+        }
+    }*/
 
 }
