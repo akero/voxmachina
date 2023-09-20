@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +26,9 @@ public class MainActivity extends AppCompatActivity {
 
     private NotificationHelper notificationHelper; // Declare the notification helper
 
+    private EditText editText;
+    private String inputText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
         createNotificationChannel();
         checkAndRequestPermissions();
 
+        editText = findViewById(R.id.edt_input);
+
+        // Set up the test button
         Button testButton = findViewById(R.id.btn_test_notification);
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,8 +50,25 @@ public class MainActivity extends AppCompatActivity {
                 testNotification();
             }
         });
+
+        // Set up the accept input button
+        Button acceptInputButton = findViewById(R.id.btn_accept_input);
+        acceptInputButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                acceptInput();
+            }
+        });
     }
 
+    private void acceptInput() {
+        inputText = editText.getText().toString();
+        Log.d("tag6", inputText);
+        // You can add code here to perform an action with the inputText.
+    }
+
+
+    //can test notifications with this
     private void testNotification() {
         notificationHelper.sendNotification();
     }

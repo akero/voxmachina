@@ -8,6 +8,25 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <EditText
+        android:id="@+id/edt_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter text here"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"/>
+
+    <Button
+        android:id="@+id/btn_accept_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Accept Input"
+        android:layout_marginTop="16dp"
+        android:layout_centerInParent="true"/>
+
+
+
     <Button
         android:id="@+id/btn_test_notification"
         android:layout_width="wrap_content"
