@@ -17,12 +17,19 @@ import androidx.core.content.ContextCompat;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+import java.io.IOException;
+
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 1234;
-    private static final int PERMISSION_REQUEST_CODE_POST_NOTIFICATIONS = 5678;
+    //private static final int PERMISSION_REQUEST_CODE_POST_NOTIFICATIONS = 5678;
 
     private NotificationHelper notificationHelper; // Declare the notification helper
 
@@ -59,6 +66,26 @@ public class MainActivity extends AppCompatActivity {
                 acceptInput();
             }
         });
+
+        callapi();
+    }
+
+    void callapi(){
+        APIclass.makeRequest("Translate the following English text to French: 'Hello, World!'", new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // Handle failure
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                // Handle success
+                String responseBody = response.body().string();
+                Log.d("tag8", responseBody);
+                // Parse JSON and update UI
+            }
+        });
+
     }
 
     private void acceptInput() {
