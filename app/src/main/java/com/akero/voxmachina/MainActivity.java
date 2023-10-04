@@ -67,11 +67,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        callapi();
+        //calling api
+        String prompt="Translate the following English text to French: 'Hello, World!'"; //TODO: accept prompt as input
+        callapi(prompt);
     }
 
-    void callapi(){
-        APIclass.makeRequest("Translate the following English text to French: 'Hello, World!'", new Callback() {
+    void callapi(String prompt){
+        APIclass.makeRequest(prompt, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 // Handle failure
@@ -83,8 +85,13 @@ public class MainActivity extends AppCompatActivity {
                 String responseBody = response.body().string();
                 Log.d("tag8", responseBody);
                 // Parse JSON and update UI
+                parsejson(responseBody);
+
             }
         });
+    }
+
+    void parsejson(String responseBody){
 
     }
 
@@ -97,7 +104,9 @@ public class MainActivity extends AppCompatActivity {
 
     //can test notifications with this
     private void testNotification() {
+        Log.d("tag9", "in testnotif");
         notificationHelper.sendNotification();
+
     }
 
 
