@@ -13,9 +13,15 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -92,8 +98,63 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void parsejson(String responseBody){
+        String messageToShow = "";
+        try {
+            JSONObject jsonObject = new JSONObject(responseBody);
+            JSONArray choicesArray = jsonObject.getJSONArray("choices");
+            if(choicesArray.length() > 0) {
+                JSONObject choiceObject = choicesArray.getJSONObject(0);
+                JSONObject messageObject = choiceObject.getJSONObject("message");
+                messageToShow = messageObject.getString("content");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
+        Log.d("NotificationDebug", "Parsed Message: " + messageToShow);
+
+        // Send a notification with the parsed message
+        sendNotificationWithText("Translation Result", messageToShow);
     }
+
+
+    void sendNotificationWithText(String title, String content) {
+        Log.d("NotificationDebug", "SendNotification Method Entered");
+
+        // Creating a notification channel
+        String channelId = "notifyMe";  // Ensure this ID is used when creating the notification channel
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE) == PackageManager.PERMISSION_GRANTED) {
+            Log.d("NotificationDebug", "Permission Granted");
+
+            // Building the notification
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
+                    .setSmallIcon(R.drawable.notification_icon)  // Ensure this icon exists in your drawables
+                    .setContentTitle(title)
+                    .setContentText(content)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+            // Obtaining the NotificationManager service
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+            // Attempting to send the notification
+            try {
+                notificationManager.notify(1, builder.build());
+                Log.d("NotificationDebug", "Notification Sent");
+            } catch (SecurityException e) {
+                // Handle the SecurityException
+                e.printStackTrace();
+                Log.e("NotificationDebug", "Security Exception: " + e.getMessage());
+            }
+        } else {
+            Log.e("NotificationDebug", "Permission Not Granted");
+            // Consider prompting the user to enable the necessary permissions
+        }
+    }
+
+
+
+
 
     private void acceptInput() {
         inputText = editText.getText().toString();
@@ -114,11 +175,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void createNotificationChannel() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("notifyMe", "Notification Channel", NotificationManager.IMPORTANCE_DEFAULT);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT; // consider using IMPORTANCE_HIGH
+            NotificationChannel channel = new NotificationChannel("notifyMe", "Notification Channel", importance);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }
     }
+
 
     private void checkAndRequestPermissions() {
         Log.d("tag1", "in checkpermissions");
