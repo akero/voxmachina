@@ -47,6 +47,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Request POST_NOTIFICATIONS permission
+        if (ContextCompat.checkSelfPermission(this, "android.permission.POST_NOTIFICATIONS") != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{"android.permission.POST_NOTIFICATIONS"}, PERMISSION_REQUEST_CODE);
+        }
+
+
+
         notificationHelper = new NotificationHelper(this); // Initialize the helper
 
         // Create the notification channel
@@ -76,6 +83,19 @@ public class MainActivity extends AppCompatActivity {
         //calling api
         String prompt="Translate the following English text to French: 'Hello, World!'"; //TODO: accept prompt as input
         callapi(prompt);
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d("MainActivity", "POST_NOTIFICATIONS permission granted");
+            } else {
+                Log.d("MainActivity", "POST_NOTIFICATIONS permission denied");
+            }
+        }
     }
 
     void callapi(String prompt){
@@ -175,12 +195,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void createNotificationChannel() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            int importance = NotificationManager.IMPORTANCE_DEFAULT; // consider using IMPORTANCE_HIGH
-            NotificationChannel channel = new NotificationChannel("notifyMe", "Notification Channel", importance);
+            String channelId = "notifyMe";
+            String channelName = "Notification Channel";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+
+            NotificationChannel channel = new NotificationChannel(channelId, channelName, importance);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }
     }
+
 
 
     private void checkAndRequestPermissions() {
@@ -202,18 +226,7 @@ public class MainActivity extends AppCompatActivity {
         scheduleReminder();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d("tag1", "permission granted");
-                scheduleReminder();
-            } else {
-                Log.d("tag1", "permission not granted");
-            }
-        }
-    }
+
 
     private void scheduleReminder() {
         PeriodicWorkRequest reminderRequest =
