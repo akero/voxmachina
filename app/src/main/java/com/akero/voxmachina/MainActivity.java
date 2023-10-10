@@ -134,8 +134,10 @@ public class MainActivity extends AppCompatActivity {
         Log.d("NotificationDebug", "Parsed Message: " + messageToShow);
 
         // Send a notification with the parsed message
-        sendNotificationWithText("Translation Result", messageToShow);
+        notificationHelper.sendNotification(messageToShow);
     }
+
+
 
 
     void sendNotificationWithText(String title, String content) {
@@ -186,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
     //can test notifications with this
     private void testNotification() {
         Log.d("tag9", "in testnotif");
-        notificationHelper.sendNotification();
+        notificationHelper.sendNotification("test notification");
 
     }
 
@@ -221,8 +223,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onPermissionAlreadyGranted() {
+        //todo delete this fn
         Log.d("tag1", "onPermissionAlreadyGranted");
-        notificationHelper.sendNotification();  // Using NotificationHelper to send the notification immediately for testing purposes
+        notificationHelper.sendNotification("test notification");  // Using NotificationHelper to send the notification immediately for testing purposes
         scheduleReminder();
     }
 

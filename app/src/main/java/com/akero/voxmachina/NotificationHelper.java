@@ -16,12 +16,12 @@ public class NotificationHelper {
         this.context = context;
     }
 
-    void sendNotification() {
+    void sendNotification(String message) {
         // Create a Notification builder using the correct channel ID.
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "notifyMe")
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle("Reminder")
-                .setContentText("This is your reminder!")
+                .setContentTitle("Translation Result")
+                .setContentText(message)  // Set the dynamic message here
                 .setPriority(NotificationCompat.PRIORITY_HIGH);
 
         Log.d("NotificationDebug", "Preparing to send notification...");
