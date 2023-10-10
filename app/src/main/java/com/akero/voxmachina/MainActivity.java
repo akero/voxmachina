@@ -1,6 +1,10 @@
 package com.akero.voxmachina;
 
 import android.Manifest;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.pm.PackageManager;
@@ -9,6 +13,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import retrofit2.Callback;
+
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,12 +29,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Response;
+
+//import okhttp3.Call;
+//import okhttp3.Callback;
+//import okhttp3.MediaType;
+//import okhttp3.RequestBody;
+//import okhttp3.Response;
 import java.io.IOException;
 
 
@@ -37,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 1234;
     //private static final int PERMISSION_REQUEST_CODE_POST_NOTIFICATIONS = 5678;
 
+    private static final String API_KEY= "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";
     private NotificationHelper notificationHelper; // Declare the notification helper
 
     private EditText editText;
@@ -99,24 +113,66 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void callapi(String prompt){
-        APIclass.makeRequest(prompt, new Callback() {
+        APIclass.makeRequest(prompt, new Callback<ResponseBody>() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 // Handle failure
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                // Handle success
-                String responseBody = response.body().string();
-                Log.d("tag8", responseBody);
-                // Parse JSON and update UI
-                parsejson(responseBody);
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    InputStreamReader reader = new InputStreamReader(response.body().byteStream());
+                    BufferedReader br = new BufferedReader(reader);
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        sb.append(line);
+                    }
+                    br.close();
+                    reader.close();
+                    String responseBody = sb.toString();
+                    Log.d("tag8", responseBody);
+                    // Parse JSON and update UI
+                    parsejson(responseBody);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    // Handle the exception
+                }
+            }
 
+
+        } //TODO here
+    }
+
+
+    //send audio bytearray then this fn will send it to whisper and get the response
+    private void transcribeAudio(byte[] audioData) {
+        RequestBody audioFile = RequestBody.create(audioData, MediaType.parse("audio/wav"));
+
+        WhisperApi.getWhisperService().transcribeAudio(API_KEY, audioFile).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        // Handle successful response
+                        String transcribedText = response.body().string();
+                        // Do something with the transcribed text
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        // Handle the exception
+                    }
+                } else {
+                    // Handle error
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // Handle failure
             }
         });
     }
-
     void parsejson(String responseBody){
         String messageToShow = "";
         try {
@@ -136,9 +192,6 @@ public class MainActivity extends AppCompatActivity {
         // Send a notification with the parsed message
         notificationHelper.sendNotification(messageToShow);
     }
-
-
-
 
     void sendNotificationWithText(String title, String content) {
         Log.d("NotificationDebug", "SendNotification Method Entered");
