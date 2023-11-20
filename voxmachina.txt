@@ -1,0 +1,19 @@
+>try to publish this. deadline for this is 29 september.
+>try to advertise this
+You write down or talk in text or voice your tasks for the day and the pa automatically sets up your calendar for the day and pings you at relevant times with a voice ping reminder on the homescreen. When app opens it auto opens mic and asks user for his tasks with text on screen and a open mic ucon. It understands the tasks and how long they will take and sets up the schedule automatically. Once its setup the user can close app or edit. Apple ai.
+
+optional look into fine tuning for faster responses. use someone's persona to train. text transcript.
+
+>pings you at relevant times with a voice ping reminder on the homescreen.
+
+autonomous pa ai
+scheduling day, executing on things
+use zapier to connect
+needs voice
+needs to be autonomous
+needs to initiate automatically. bug people.
+
+look at human voice open source ai assistant for phones
+>connect gpt api with human voice synthesizer
+
+

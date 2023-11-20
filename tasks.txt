@@ -1,0 +1,98 @@
+vox main is the chat
+
+Excellent choice! OpenAI's Whisper is an automatic speech recognition (ASR) system which can be used to convert speech to text. Here are the steps to integrate Whisper ASR into your project:
+
+### Phase 1: Voice Input Setup with Whisper
+
+#### Task 1.1: Set Up Whisper ASR
+
+>>>1. **Create a Whisper API Key**:
+    - If you haven't already, sign up for access to the Whisper ASR API and create an API key.
+
+>>2. **Permissions**:
+    - Ensure that the `RECORD_AUDIO` permission is present in your AndroidManifest.xml file:
+    ```xml
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    ```
+
+>3. **Audio Recording**:
+    - Set up audio recording in your app to capture the user's voice input. You can use Android's `MediaRecorder` or `AudioRecord` classes for this purpose.
+
+4. **Whisper ASR API Integration**:
+    - Create a method to send the audio data to the Whisper ASR API and receive the transcription.
+    ```java
+    private void transcribeAudio(byte[] audioData) {
+        // Set up the HTTP request to Whisper ASR API
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = RequestBody.create(audioData, MediaType.parse("audio/wav"));
+        Request request = new Request.Builder()
+            .url("https://api.openai.com/v1/whisper/asr")  // Replace with the correct URL
+            .header("Authorization", "Bearer YOUR_API_KEY")
+            .post(requestBody)
+            .build();
+
+        // Send the request and handle the response
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // Handle failure
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String transcription = response.body().string();
+                    // TODO: Process the transcription
+                } else {
+                    // Handle error
+                }
+            }
+        });
+    }
+    ```
+
+#### Task 1.2: Implement Voice Input
+
+1. **Triggering Voice Input**:
+    - Create a button or other UI element to start and stop audio recording.
+    ```java
+    Button voiceInputButton = findViewById(R.id.voice_input_button);
+    voiceInputButton.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // TODO: Start or stop audio recording
+        }
+    });
+    ```
+
+2. **Processing Voice Input**:
+    - Once the recording is finished, send the audio data to Whisper ASR for transcription using the `transcribeAudio` method you created earlier.
+
+#### Task 1.3: Test Voice Input
+
+1. **Testing**:
+    - Run your app on a device or emulator.
+    - Use the button to start and stop recording, and check if the transcription from Whisper ASR is accurate and useful for further processing in your app.
+
+This setup outlines how you can integrate Whisper ASR into your app for voice input. Make sure to replace `"YOUR_API_KEY"` and other placeholder values with your actual data. Let me know if you need further clarifications or if you're ready to move on to the next item!
+
+
+
+>connect reply to notif
+parse into a sched
+tweak sent remote request to get a usable sched
+
+implement sched 
+
+attach returned sched to notifs
+
+
+/pings you at relevant times with a voice ping reminder on the homescreen.
+/voice ping reminder on the homescreen
+//set up git
+//set up main
+//fix it not showing up
+//put notif code in diff class
+//implement remote
+//send input to remote
+//get reply back
