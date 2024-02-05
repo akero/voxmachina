@@ -30,6 +30,7 @@ android {
 
 dependencies {
 
+    implementation 'com.google.android.gms:play-services-cronet:18.0.1'
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     // OkHttp Logging Interceptor (optional but helpful for debugging)
