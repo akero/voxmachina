@@ -45,7 +45,7 @@ import retrofit2.Response;
 import java.io.IOException;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ApiInterface{
 
     private static final int PERMISSION_REQUEST_CODE = 1234;
     //private static final int PERMISSION_REQUEST_CODE_POST_NOTIFICATIONS = 5678;
@@ -65,8 +65,6 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, "android.permission.POST_NOTIFICATIONS") != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{"android.permission.POST_NOTIFICATIONS"}, PERMISSION_REQUEST_CODE);
         }
-
-
 
         notificationHelper = new NotificationHelper(this); // Initialize the helper
 
@@ -113,38 +111,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void callapi(String prompt){
-        APIclass.makeRequest(prompt, new Callback<ResponseBody>() {
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                // Handle failure
-            }
+        ApiReferenceClass api= new ApiReferenceClass(prompt, this);
 
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try {
-                    InputStreamReader reader = new InputStreamReader(response.body().byteStream());
-                    BufferedReader br = new BufferedReader(reader);
-                    StringBuilder sb = new StringBuilder();
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        sb.append(line);
-                    }
-                    br.close();
-                    reader.close();
-                    String responseBody = sb.toString();
-                    Log.d("tag8", responseBody);
-                    // Parse JSON and update UI
-                    parsejson(responseBody);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    // Handle the exception
-                }
-            }
-
-
-        } //TODO here
     }
 
+    public void onResponseReceived(String response){
+        Log.d("response", response);
+    }
 
     //send audio bytearray then this fn will send it to whisper and get the response
     private void transcribeAudio(byte[] audioData) {
@@ -173,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     void parsejson(String responseBody){
         String messageToShow = "";
         try {
@@ -227,16 +201,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
-
-
     private void acceptInput() {
         inputText = editText.getText().toString();
         Log.d("tag6", inputText);
         // You can add code here to perform an action with the inputText.
     }
-
 
     //can test notifications with this
     private void testNotification() {
@@ -244,9 +213,6 @@ public class MainActivity extends AppCompatActivity {
         notificationHelper.sendNotification("test notification");
 
     }
-
-
-
 
     private void createNotificationChannel() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -259,8 +225,6 @@ public class MainActivity extends AppCompatActivity {
             manager.createNotificationChannel(channel);
         }
     }
-
-
 
     private void checkAndRequestPermissions() {
         Log.d("tag1", "in checkpermissions");
@@ -282,13 +246,10 @@ public class MainActivity extends AppCompatActivity {
         scheduleReminder();
     }
 
-
-
     private void scheduleReminder() {
         PeriodicWorkRequest reminderRequest =
                 new PeriodicWorkRequest.Builder(ReminderWorker.class, 24, TimeUnit.HOURS)
                         .build();
-
         WorkManager.getInstance(this).enqueue(reminderRequest);
     }
 }
