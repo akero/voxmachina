@@ -1,3 +1,5 @@
+flow- floating action button to dictate- send to ai- get points- enter into list
+
 vox main is the chat
 
 Excellent choice! OpenAI's Whisper is an automatic speech recognition (ASR) system which can be used to convert speech to text. Here are the steps to integrate Whisper ASR into your project:

@@ -48,7 +48,6 @@ import java.io.IOException;
 public class MainActivity extends AppCompatActivity implements ApiInterface{
 
     private static final int PERMISSION_REQUEST_CODE = 1234;
-    //private static final int PERMISSION_REQUEST_CODE_POST_NOTIFICATIONS = 5678;
 
     private static final String API_KEY= "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";
     private NotificationHelper notificationHelper; // Declare the notification helper
